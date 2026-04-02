@@ -4,8 +4,8 @@
 </script>
 
 <svelte:head>
-	<title>Browser ASR</title>
-	<meta name="description" content="Local audio transcription in your browser" />
+	<title>Audio-Transkribierer</title>
+	<meta name="description" content="Lokale Audio-Transkription direkt im Browser" />
 </svelte:head>
 
 <div class="min-h-screen bg-slate-50">
@@ -18,7 +18,7 @@
 					<line x1="12" y1="19" x2="12" y2="23" />
 					<line x1="8" y1="23" x2="16" y2="23" />
 				</svg>
-				Browser ASR
+				Audio-Transkribierer
 			</a>
 		</div>
 	</header>

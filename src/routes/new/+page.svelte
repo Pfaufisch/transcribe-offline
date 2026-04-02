@@ -12,7 +12,7 @@
 	import { createTranscript, saveAudioBlob } from '$lib/db';
 	import { LANGUAGES } from '$lib/types';
 
-	let language = $state('en');
+	let language = $state('de');
 	let modelProgress = $state<TranscriberProgress>({
 		status: 'idle',
 		progress: 0,
@@ -124,7 +124,7 @@
 
 					const transcriptionTime = (performance.now() - startTime) / 1000;
 					const id = crypto.randomUUID();
-					const title = `Recording ${new Date().toLocaleString()}`;
+					const title = `Aufnahme ${new Date().toLocaleString('de-DE')}`;
 
 					await createTranscript({
 						id,
@@ -170,7 +170,7 @@
 				<path d="M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="text-2xl font-bold text-slate-800">New Transcription</h1>
+		<h1 class="text-2xl font-bold text-slate-800">Neue Transkription</h1>
 	</div>
 
 	{#if !webgpuSupported}
@@ -181,9 +181,9 @@
 				<line x1="15" y1="9" x2="9" y2="15" />
 				<line x1="9" y1="9" x2="15" y2="15" />
 			</svg>
-			<h2 class="text-lg font-semibold text-red-700">WebGPU Not Available</h2>
+			<h2 class="text-lg font-semibold text-red-700">WebGPU nicht verfügbar</h2>
 			<p class="mt-2 text-sm text-red-600">
-				This app requires WebGPU to run the transcription model locally. Please use a recent version of Chrome or Edge.
+				Diese App benötigt WebGPU, um das Transkriptionsmodell lokal auszuführen. Bitte verwende eine aktuelle Version von Chrome oder Edge.
 			</p>
 		</div>
 	{:else if isTranscribing || (modelProgress.status === 'loading')}
@@ -192,7 +192,7 @@
 			{#if modelProgress.status === 'loading' && modelProgress.progress < 100}
 				<div class="mb-6">
 					<div class="mb-2 flex items-center justify-between text-sm">
-						<span class="font-medium text-slate-700">Loading model...</span>
+						<span class="font-medium text-slate-700">Modell wird geladen...</span>
 						<span class="text-slate-500">{modelProgress.progress}%</span>
 					</div>
 					<div class="h-2 overflow-hidden rounded-full bg-slate-100">
@@ -208,13 +208,13 @@
 			{#if streamedText || isTranscribing}
 				<div class="mb-3 flex items-center gap-2">
 					<div class="h-2 w-2 animate-pulse rounded-full bg-violet-500"></div>
-					<span class="text-sm font-medium text-slate-600">Transcribing...</span>
+					<span class="text-sm font-medium text-slate-600">Transkribiere...</span>
 				</div>
 				<div
 					bind:this={outputRef}
 					class="max-h-96 overflow-y-auto rounded-lg bg-slate-50 p-4 font-mono text-sm text-slate-700"
 				>
-					{streamedText || 'Waiting for transcription to start...'}
+					{streamedText || 'Warte auf Transkription...'}
 				</div>
 			{/if}
 		</div>
@@ -224,8 +224,8 @@
 			<div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
 				<div class="h-4 w-4 animate-pulse rounded-full bg-red-500"></div>
 			</div>
-			<h2 class="text-lg font-semibold text-slate-800">Recording...</h2>
-			<p class="mt-1 text-sm text-slate-500">Click stop when you're done</p>
+			<h2 class="text-lg font-semibold text-slate-800">Aufnahme...</h2>
+			<p class="mt-1 text-sm text-slate-500">Klicke auf Stopp, wenn du fertig bist</p>
 			<button
 				onclick={stopRecording}
 				class="mt-4 inline-flex items-center gap-2 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
@@ -233,7 +233,7 @@
 				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
 					<rect x="6" y="6" width="12" height="12" rx="1" />
 				</svg>
-				Stop Recording
+				Stop
 			</button>
 		</div>
 	{:else}
@@ -241,7 +241,7 @@
 		<div class="space-y-4">
 			<!-- Language selector -->
 			<div class="rounded-xl border border-slate-200 bg-white p-4">
-				<label for="language" class="mb-1.5 block text-sm font-medium text-slate-700">Language</label>
+				<label for="language" class="mb-1.5 block text-sm font-medium text-slate-700">Sprache</label>
 				<select
 					id="language"
 					bind:value={language}
@@ -273,8 +273,8 @@
 						</svg>
 					</div>
 					<div class="text-center">
-						<span class="block font-medium text-slate-700">Upload File</span>
-						<span class="text-xs text-slate-400">or drag & drop audio here</span>
+						<span class="block font-medium text-slate-700">Datei hochladen</span>
+						<span class="text-xs text-slate-400">oder Audio hierher ziehen</span>
 					</div>
 				</button>
 
@@ -300,8 +300,8 @@
 						</svg>
 					</div>
 					<div class="text-center">
-						<span class="block font-medium text-slate-700">Record Audio</span>
-						<span class="text-xs text-slate-400">use your microphone</span>
+						<span class="block font-medium text-slate-700">Audio aufnehmen</span>
+						<span class="text-xs text-slate-400">Mikrofon verwenden</span>
 					</div>
 				</button>
 			</div>

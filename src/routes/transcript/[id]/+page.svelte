@@ -13,6 +13,8 @@
 	let editText = $state('');
 	let copied = $state(false);
 	let confirmDelete = $state(false);
+	let isRenaming = $state(false);
+	let renameValue = $state('');
 	let saveTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	const id = $derived(page.params.id);
@@ -51,6 +53,32 @@
 			await updateTranscript(id, { text: editText });
 			if (transcript) transcript = { ...transcript, text: editText, updatedAt: Date.now() };
 		}, 500);
+	}
+
+	function startRename() {
+		if (!transcript) return;
+		renameValue = transcript.title;
+		isRenaming = true;
+	}
+
+	async function saveRename() {
+		const trimmed = renameValue.trim();
+		if (!trimmed || !transcript) {
+			isRenaming = false;
+			return;
+		}
+		await updateTranscript(id, { title: trimmed });
+		transcript = { ...transcript, title: trimmed, updatedAt: Date.now() };
+		isRenaming = false;
+	}
+
+	function handleRenameKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			saveRename();
+		} else if (e.key === 'Escape') {
+			isRenaming = false;
+		}
 	}
 
 	async function copyToClipboard() {
@@ -95,7 +123,31 @@
 					</svg>
 				</a>
 				<div>
-					<h1 class="text-2xl font-bold text-slate-800">{transcript.title}</h1>
+					{#if isRenaming}
+						<!-- svelte-ignore a11y_autofocus -->
+						<input
+							type="text"
+							bind:value={renameValue}
+							onkeydown={handleRenameKeydown}
+							onblur={saveRename}
+							autofocus
+							class="rounded border border-violet-300 px-2 py-1 text-2xl font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-violet-400"
+						/>
+					{:else}
+						<div class="flex items-center gap-2">
+							<h1 class="text-2xl font-bold text-slate-800">{transcript.title}</h1>
+							<button
+								onclick={startRename}
+								class="rounded-md p-1 text-slate-300 transition-colors hover:bg-violet-50 hover:text-violet-500"
+								title="Umbenennen"
+							>
+								<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+									<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+								</svg>
+							</button>
+						</div>
+					{/if}
 					<div class="mt-0.5 flex items-center gap-2 text-sm text-slate-400">
 						<span>{getLanguage(transcript.language).flag} {getLanguage(transcript.language).label}</span>
 						<span>·</span>
@@ -122,7 +174,7 @@
 							<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
 							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
 						</svg>
-						Copy
+						Kopieren
 					{/if}
 				</button>
 				<button
@@ -141,13 +193,13 @@
 						onclick={handleDelete}
 						class="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
 					>
-						Confirm Delete
+						Wirklich löschen
 					</button>
 					<button
 						onclick={() => (confirmDelete = false)}
 						class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-50"
 					>
-						Cancel
+						Abbrechen
 					</button>
 				{:else}
 					<button
@@ -158,7 +210,7 @@
 							<polyline points="3 6 5 6 21 6" />
 							<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
 						</svg>
-						Delete
+						Löschen
 					</button>
 				{/if}
 			</div>
@@ -171,7 +223,7 @@
 					<svg class="h-4 w-4 text-violet-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<polygon points="5 3 19 12 5 21 5 3" />
 					</svg>
-					Audio Player
+					Audio-Player
 				</div>
 				<!-- svelte-ignore element_invalid_self_closing_tag -->
 				<audio controls src={audioUrl} class="w-full" preload="metadata" />
@@ -184,7 +236,7 @@
 						<line x1="12" y1="8" x2="12" y2="12" />
 						<line x1="12" y1="16" x2="12.01" y2="16" />
 					</svg>
-					Audio has expired (files are kept for 24 hours)
+					Audio ist abgelaufen (Dateien werden 24 Stunden aufbewahrt)
 				</div>
 			</div>
 		{/if}
@@ -192,8 +244,8 @@
 		<!-- Transcript Editor -->
 		<div class="rounded-xl border border-slate-200 bg-white p-4">
 			<div class="mb-2 flex items-center justify-between">
-				<span class="text-sm font-medium text-slate-600">Transcript</span>
-				<span class="text-xs text-slate-400">Auto-saves as you edit</span>
+				<span class="text-sm font-medium text-slate-600">Transkript</span>
+				<span class="text-xs text-slate-400">Wird beim Bearbeiten automatisch gespeichert</span>
 			</div>
 			<textarea
 				value={editText}
@@ -208,20 +260,20 @@
 			<h3 class="mb-3 text-sm font-medium text-slate-600">Details</h3>
 			<dl class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
 				<div>
-					<dt class="text-slate-400">Language</dt>
+					<dt class="text-slate-400">Sprache</dt>
 					<dd class="font-medium text-slate-700">{getLanguage(transcript.language).label}</dd>
 				</div>
 				<div>
-					<dt class="text-slate-400">Audio Duration</dt>
+					<dt class="text-slate-400">Audiodauer</dt>
 					<dd class="font-medium text-slate-700">{formatDuration(transcript.audioDuration)}</dd>
 				</div>
 				<div>
-					<dt class="text-slate-400">Transcription Time</dt>
+					<dt class="text-slate-400">Transkriptionszeit</dt>
 					<dd class="font-medium text-slate-700">{formatDuration(transcript.transcriptionTime)}</dd>
 				</div>
 				<div>
-					<dt class="text-slate-400">Speed</dt>
-					<dd class="font-medium text-slate-700">{(transcript.audioDuration / transcript.transcriptionTime).toFixed(1)}x realtime</dd>
+					<dt class="text-slate-400">Geschwindigkeit</dt>
+					<dd class="font-medium text-slate-700">{(transcript.audioDuration / transcript.transcriptionTime).toFixed(1)}x Echtzeit</dd>
 				</div>
 			</dl>
 		</div>
