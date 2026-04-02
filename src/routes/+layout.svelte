@@ -26,4 +26,17 @@
 	<main class="mx-auto max-w-4xl px-4 py-6">
 		{@render children()}
 	</main>
+
+	<footer class="mt-auto border-t border-slate-200 bg-white">
+		<div class="mx-auto flex max-w-4xl items-center justify-center px-4 py-3">
+			<a href="/storage" class="flex items-center gap-1.5 text-sm text-slate-400 transition-colors hover:text-violet-600">
+				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<ellipse cx="12" cy="5" rx="9" ry="3" />
+					<path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+					<path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+				</svg>
+				Datennutzung verwalten
+			</a>
+		</div>
+	</footer>
 </div>

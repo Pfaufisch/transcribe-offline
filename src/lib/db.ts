@@ -113,3 +113,32 @@ export async function cleanupExpiredAudio(): Promise<number> {
 
 	return deleted;
 }
+
+// --- List all audio blobs with metadata ---
+
+export interface AudioBlobInfo {
+	transcriptId: string;
+	transcriptTitle: string;
+	size: number;
+	mimeType: string;
+	createdAt: number;
+}
+
+export async function listAudioBlobs(): Promise<AudioBlobInfo[]> {
+	const db = await getDB();
+	const allAudio = await db.getAll('audioBlobs');
+	const result: AudioBlobInfo[] = [];
+
+	for (const audio of allAudio) {
+		const transcript = await db.get('transcripts', audio.transcriptId);
+		result.push({
+			transcriptId: audio.transcriptId,
+			transcriptTitle: transcript?.title ?? 'Unbekannt',
+			size: audio.blob.size,
+			mimeType: audio.mimeType,
+			createdAt: audio.createdAt
+		});
+	}
+
+	return result.sort((a, b) => b.createdAt - a.createdAt);
+}
