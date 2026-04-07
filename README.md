@@ -1,6 +1,6 @@
-# Browser ASR
+# Transcribe Offline
 
-A fully local, browser-based audio transcription app. All processing happens on-device — no audio leaves your computer.
+A fully local, browser-based audio transcription app. All processing happens on-device – no audio leaves your computer.
 
 Powered by [Cohere Transcribe](https://huggingface.co/CohereLabs/cohere-transcribe-03-2026) (2B parameter ASR model) running via [Transformers.js](https://huggingface.co/docs/transformers.js) and WebGPU.
 
@@ -19,7 +19,7 @@ Powered by [Cohere Transcribe](https://huggingface.co/CohereLabs/cohere-transcri
 ## Requirements
 
 - A WebGPU-capable browser (Chrome 113+ or Edge 113+)
-- ~1 GB of storage for the model (cached after first download)
+- ~2 GB of storage for the model (cached after first download)
 
 ## Getting Started
 
@@ -30,15 +30,7 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in Chrome or Edge.
 
-On first use, the model will be downloaded and cached in the browser (~1 GB, q4 quantized). Subsequent loads are near-instant.
-
-## Tech Stack
-
-- **Svelte 5** (runes) + **SvelteKit** + **TypeScript**
-- **Tailwind CSS 4**
-- **@huggingface/transformers** — runs the ONNX model via WebGPU
-- **idb** — IndexedDB wrapper for persistent storage
-- Model: [`onnx-community/cohere-transcribe-03-2026-ONNX`](https://huggingface.co/onnx-community/cohere-transcribe-03-2026-ONNX)
+On first use, the model will be downloaded and cached in the browser (~2 GB, q4 quantized). Subsequent loads are near-instant.
 
 ## Building
 
